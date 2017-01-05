@@ -9,7 +9,8 @@ extract($_POST);
 </head>
 <body>
 <?php if(!empty($login)){ ?>
-<p>Votre login est <?php echo $login;  ?>
+strip tag pour supprimer les tags (les balises et notamment script) ce qui sécurise plus les données à afficher
+<p>Votre login est <?php echo strip_tags($login);  ?>
 
 </p>
 <?php } ?>
