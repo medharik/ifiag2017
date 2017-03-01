@@ -45,6 +45,6 @@ $resultat=Produit::get_all();
  <p>Libellé : <?php echo $ligne["libelle"]; ?></p> 
   <p>Prix : <?php echo $ligne["libelle"]; ?></p> 
    <p>Id : <?php echo $ligne["id"]; ?></p> 
-   <p><a href="<?php echo basename(__FILE__); ?>">Supprimer</a></p>
+   <p><a href="<?php echo basename(__FILE__); ?>"?>Supprimer</a></p>
    <hr>
   <?php endforeach ?>
