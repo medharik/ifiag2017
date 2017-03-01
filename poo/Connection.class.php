@@ -12,6 +12,8 @@ class Connection
 }
 	return  self::$cnx;	
 	}
+
+	
 	
 }
 
