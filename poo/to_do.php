@@ -1,2 +1,2 @@
-recursicité + redefiction parent+
+recursivité + redefinition parent+
 constructeur par copie
