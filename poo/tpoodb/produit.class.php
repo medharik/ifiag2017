@@ -2,8 +2,8 @@
 include 'Utils.class.php';
 class Produit 
 {
-	private $_nom=null;
-	private $_prix=null;
+	public $_nom=null;
+	public $_prix=null;
 
 
 
