@@ -86,7 +86,17 @@ where $namesdb;
 	return $pr->fetchAll(PDO::FETCH_OBJ);
 }
 
+public static function set_value($nom)
+{
+	if(!empty($_POST[$nom]))
+	{
+		setcookie($nom, $_POST[$nom], time()+60);
+	}
+	if(!empty($_COOKIE[$nom])){
+		echo $_COOKIE[$nom];
+	}
 
+}
 
 }
  ?>
