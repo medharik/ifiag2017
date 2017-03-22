@@ -1,18 +1,14 @@
 <?php 
+session_start();
 include 'produit.class.php';
-var_dump($_COOKIE);
+//var_dump($_COOKIE);
 extract($_POST);
 extract($_GET);
 Utils::set_value('libelle');
 //var_dump($ps);
 $btn="Ajouter";
 $m="";
-//code ajout
-if(isset($libelle) and  !empty($prix) and empty($id)){
-	//var_dump($_POST);
-Utils::ajouter("produit",$_POST);
-$m="ajout ok";
-}
+
 
 //code delete ids
 if (!empty($ids) ) {
@@ -59,12 +55,12 @@ $liste=Utils::get_all("produit");
 </head>
 <body>
 <?php echo $m; ?>
-	<form action="<?=basename(__FILE__); ?>" method="post" >
-	<input type="hidden" name="id" value="<?php if(isset($pr_a_modif)) echo $pr_a_modif->id; ?>">
+	<form action="<?=basename(__FILE__); ?>" method="post" id="formop">
+	<input type="hidden" name="id" value="<?php if(isset($pr_a_modif)) echo $pr_a_modif->id; ?>" id="id">
 		<table align="center" width="400">
 			<tr>
 				<td>Libellé : </td>
-		<td><input type="text" name="libelle" value="<?php 
+		<td><input type="text" name="libelle" id="libelle" value="<?php 
 
 		if(isset($pr_a_modif)) {echo $pr_a_modif->libelle; 
 		}
@@ -75,11 +71,11 @@ Utils::set_value('libelle');
 			</tr>
 			<tr>
 				<td>Prix : </td>
-				<td><input type="text" name="prix" value="<?php if(isset($pr_a_modif)) echo $pr_a_modif->prix; ?>"></td>
+				<td><input type="text" name="prix" value="<?php if(isset($pr_a_modif)) echo $pr_a_modif->prix; ?>" id="prix"></td>
 			</tr>
 			<tr>
 				<td></td>
-				<td><input type="submit" value="<?php echo $btn; ?>"></td>
+				<td><input type="submit" value="<?php echo $btn; ?>" id="valider"></td>
 			</tr>
 		</table>
 	</form>
@@ -94,31 +90,39 @@ Utils::set_value('libelle');
 	</ul>
 <?php endif ?>
 <form action="<?php echo basename(__FILE__); ?>" method="post">
-	<table 	align="center" width="90%" border="1">
+	<table 	align="center" width="90%" border="1" id="liste">
+		<thead>
 		<tr>
 			<td>id</td>
 			<td>libelle</td>
 			<td>prix</td>
 			<td>Opérations</td>
 		</tr>
+</thead>
+		
+<tbody id="corps">
+	
+
+</tbody>
+
 <?php foreach ($liste as  $produit): 
 
 
 ?>
 	<tr>
-			<td><?=$produit->id; ?></td>
+			<td class="idproduit"><?=$produit->id; ?></td>
 			<td><?=$produit->libelle; ?></td>
 			<td><?=$produit->prix; ?></td>
 			<td>
-<a href="<?=basename(__FILE__) ?>?idc=<?=$produit->id;?>">Consulter</a>
-			<a href="<?=basename(__FILE__) ?>?ids=<?=$produit->id;?>">Supprimer</a>
-<a href="<?=basename(__FILE__) ?>?idm=<?=$produit->id;?>">Modifier</a>
-<input type="checkbox" name="ps[]" value="<?=$produit->id;?>" class='sup' onclick="actiongroupe()">
-
-
+	<a href="<?=basename(__FILE__) ?>?idc=<?=$produit->id;?>">Consulter</a>
+			<a href="<?=basename(__FILE__) ?>?ids=<?=$produit->id;?>"   class="supprimer">Supprimer</a>
+	<a href="<?=basename(__FILE__) ?>"  class="modifier">Modifier</a>
+	<input type="checkbox" name="ps[]" value="<?=$produit->id;?>" class='sup' onclick="actiongroupe()">
+	
+	
 			</td>
-		</tr>
-<?php endforeach ?>
+		</tr> 
+<?php  endforeach ?>
 		
 	</table>
 
@@ -127,17 +131,86 @@ Utils::set_value('libelle');
 <input type="submit" id="sp" value="Supprimer"  onclick="return annuler()"  >
 </div>
 </form>
+<script type="text/javascript" src="../../jquery.min.js"></script>
 <script type="text/javascript">
-	function annuler() {
-		if(! confirm('voulez vous vrm supprimer cces éléments ?')){
-sup=document.getElementsByClassName('sup');
-for(i=0;i<sup.length;i++){
-sup[i].checked=false;
+
+$('.supprimer').click(function(event) {
+event.preventDefault();
+$.ajax({
+	url: '<?php echo basename(__FILE__) ?>',
+	type: 'GET',
+	
+	data: {ids: $(this).parent().parent().find('td.idproduit').text()},
+})
+.done(function() {
+	console.log("success "+$(this).parent().parent().find('td.idproduit').text());
+
+})
+.fail(function() {
+	console.log("error");
+})
+.always(function() {
+	console.log("complete");
+});
+
+});
+
+$('.modifier').click(function(event) {
+event.preventDefault();
+$.ajax({
+	url: 'c.php?idm',
+	type: 'GET',
+	datatype:'json',
+	data: {idm: $(this).parent().parent().find('td.idproduit').text()},
+})
+.done(function(data) {
+	console.log("success modif ");
+console.log(data.libelle);
+$('#id').val(data.id);
+
+$('#libelle').val(data.libelle);
+$('#prix').val(data.prix);
+$('#valider').val("modifier");
+
+
+
+})
+.fail(function() {
+	console.log("error");
+})
+.always(function() {
+	console.log("complete");
+});
+
+});
+$('#formop').submit(function(event) {
+	//event.preventDefault();
+
+$.ajax({
+	url: 'c.php',
+	type: 'POST',
+	dataType: 'json',
+	data: $(this).serialize(),
+})
+.done(function(data) {
+	console.log("success");
+
+	console.log(data);
+	ligne='';
+	for (var i = 0; i < data.length; i++) {
+ligne+='<tr><td>'+data[i].id+'</td><td>'+data[i].nom+'</td><td>'+data[i].prix+'</td><td>operations</td>	</tr>';
+
 	}
-	return false;
-}
-	return true;
-}
+$('#corps').html(ligne);
+})
+.fail(function(error) {
+	console.log('Erreur');
+	console.debug(error);
+})
+.always(function() {
+	console.log("complete");
+});
+});
 
 function actiongroupe() {
 	sup=document.getElementsByClassName('sup');
