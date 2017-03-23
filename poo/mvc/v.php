@@ -1,14 +1,6 @@
 <?php 
 session_start();
-var_dump($_SERVER);
-define('HOST',$_SERVER['HTTP_HOST']);
-define('SELF',$_SERVER['PHP_SELF']);
-define('PROTOCOL',$_SERVER['SERVER_PROTOCOL']);
-define('USER_AGENT',$_SERVER['HTTP_USER_AGENT']);
-define('USER_LANGUAGE',$_SERVER['HTTP_ACCEPT_LANGUAGE']);
-echo "<br>host".HOST."PHP SELF".SELF."PROTOCOL .".PROTOCOL." <br>" ;
-echo "<h2>".USER_AGENT."</h2>";
-echo "<h2>".substr(USER_LANGUAGE, 0, 2)."</h2>"; ?>
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

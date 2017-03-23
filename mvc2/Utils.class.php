@@ -7,7 +7,8 @@ class Utils
 	{
 		$options=array(PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES 'utf8'");
 		if(!self::$cnx){
-self::$cnx=new PDO( 'mysql:host='.HOST.';dbname=dbphp', "root", "",$options);
+self::$cnx=new PDO(
+ 'mysql:host='.HOST.';dbname='.DB_NAME,USER_NAME, PASSE,$options);
 }
 	return  self::$cnx;	
 	}
@@ -65,7 +66,7 @@ public static function get_all($table)
 	$cnx=Utils::connecter_db();
 	$pr=$cnx->prepare("select * from $table
 
-		");
+		order by id desc");
 	$pr->execute();
 	return $pr->fetchAll(PDO::FETCH_OBJ);
 }
@@ -106,5 +107,33 @@ $_SESSION[$nom]=$_POST[$nom];
 
 }
 
+public static function creer_session()
+{ 
+	if(!isset($_SESSION))
+	session_start();
+	session_regenerate_id(TRUE);
+
+}
+public static function set_notice($notice_name, $notice_value)
+{
+	self::creer_session();
+ 	$_SESSION[$notice_name]=$notice_value;
+
+
+	
+}
+public static  function get_notice($notice_name)
+{
+
+	self::creer_session();
+	if(isset($_SESSION['notice'])){
+	$x= $_SESSION[$notice_name];
+	unset($_SESSION[$notice_name]);
+	return $x;
+}else{
+	return "";
+}
+	
+}
 }
  ?>
