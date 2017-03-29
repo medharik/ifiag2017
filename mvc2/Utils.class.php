@@ -71,6 +71,19 @@ public static function get_all($table)
 	return $pr->fetchAll(PDO::FETCH_OBJ);
 }
 
+//get par id
+
+public static function get($table,$id)
+{
+	$cnx=Utils::connecter_db();
+	$pr=$cnx->prepare("select * from $table
+where id=?
+		order by id desc");
+	$pr->execute(array($id));
+	$l= $pr->fetchAll(PDO::FETCH_OBJ);
+return $l[0];
+}
+
 public static function get_by($table,$data=array())
 {$names=array();
 	$values=array();

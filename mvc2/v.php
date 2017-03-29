@@ -13,7 +13,9 @@
 		<table align="center" >
 			<tr>
 		<th><label for=""></label>Nom</th>
-	<td><input type="text" name="nom" id="nom"></td>
+	<td><input type="text" name="nom" id="nom">
+<input type="hidden" name="id" id="id">
+	</td>
 			</tr>
 			<tr>
 				<th><label for=""></label>Prix</th>
@@ -47,6 +49,7 @@
 <script type="text/javascript">
 	$('#f').submit(function(event) {
 		event.preventDefault();
+		if($('#btn').val()!="Modifier"){
 	$.ajax({
 			url: 'c.php?a=add&t=produit',
 			type: 'POST',
@@ -64,7 +67,27 @@
 		.always(function() {
 			console.log("complete");
 		});
-			
+			}else{
+
+				$.ajax({
+					url: 'c.php?a=update&t=produit',
+					type: 'POST',
+					//dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
+					data:$(this).serialize(),
+				})
+				.done(function(data) {
+					console.log("success");
+					$('#message').html(data);
+					recup();
+				})
+				.fail(function() {
+					console.log("error");
+				})
+				.always(function() {
+					console.log("complete");
+				});
+				
+			}
 
 	});
 
@@ -84,7 +107,10 @@ function recup() {
 result+="<tr><td>"+data[i].id+"</td>";
 result+="<td>"+data[i].nom+"</td>";
 result+="<td>"+data[i].prix+"</td>";
-result+="<td><a onclick=supprimer("+data[i].id+") href=#>Supprimer</a></td></tr>";
+result+="<td><a onclick=supprimer("+data[i].id+") href=#>Supprimer</a></td>";
+result+="<td><a onclick=editer("+data[i].id+") href=#>editer</a></td>";
+result+="<td><a onclick=consulter("+data[i].id+") href=#>Consulter</a></td>";
+result+="</tr>";
 	}
 	$('#corps').html(result);
 })
@@ -119,7 +145,39 @@ data:{id:id}
 
 	
 }
+//fin supprimer
+//debut editer
 
+function editer(id) {
+$.ajax({
+
+	url: 'c.php?a=edit&t=produit',
+	type: 'GET',
+data:{id:id}
+})
+.done(function(data) {
+	console.log("success");
+	$('#id').val(data.id);
+$('#nom').val(data.nom);
+	$('#prix').val(data.prix);
+$('#btn').val("Modifier");
+	
+
+	//$('#message').html(data);
+	
+})
+.fail(function() {
+	console.log("error");
+})
+.always(function() {
+	console.log("complete");
+});
+
+
+	
+}
+
+//fin editer
 
 </script>
 

@@ -15,12 +15,14 @@ echo "Ajout effectué avec succès";
 		echo "suppression effectué avec succès";
 		break;
 		case 'edit':
-		
-	
+	$element=	M::get($t,$id);
+	header('Content-type:application/json');
+	echo json_encode($element);	
 		break;
 	case 'update':
 		M::modifier($t,$_POST,$id);
 	M::set_notice('notice','modification effectuée avec succès');
+	echo "modification effectuée avec succès";
 		break;
 	case 'get':
 		$resutat=M::get_all("produit");
